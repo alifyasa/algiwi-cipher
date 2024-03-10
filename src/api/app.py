@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from utils.constant import METHOD
 from utils.ECB.service import extend_bit_ecb, encrypt_ecb, decrypt_ecb
+from utils.CBC.service import extend_bit_cbc, encrypt_cbc, decrypt_cbc
 
 app = Flask(__name__)
 CORS(app)
@@ -31,8 +32,16 @@ def encrypt():
     data['result'] = ''
     for i in range(0, len(data['resultBit']), 8):
       data['result'] += chr(int(data['resultBit'][i:i+8], 2))
+  # CBC
   elif data['method'] == METHOD['CBC']:
-    data['result'] = 'CBC'
+    # Extend plainteks bit
+    data['inputBit'] = extend_bit_cbc(data['inputBit'], data['keyBit'])
+    # Encrypt plainteks bit
+    data['resultBit'] = encrypt_cbc(data['inputBit'], data['keyBit'])
+    # Convert cipher bit to text
+    data['result'] = ''
+    for i in range(0, len(data['resultBit']), 8):
+      data['result'] += chr(int(data['resultBit'][i:i+8], 2))
   elif data['method'] == METHOD['OFB']:
     data['result'] = 'OFB'
   elif data['method'] == METHOD['CFB']:
@@ -66,8 +75,16 @@ def decrypt():
     data['result'] = ''
     for i in range(0, len(data['resultBit']), 8):
       data['result'] += chr(int(data['resultBit'][i:i+8], 2))
+  # CBC
   elif data['method'] == METHOD['CBC']:
-    data['result'] = 'CBC'
+    # Extend plainteks bit
+    data['inputBit'] = extend_bit_cbc(data['inputBit'], data['keyBit'])
+    # Encrypt plainteks bit
+    data['resultBit'] = decrypt_cbc(data['inputBit'], data['keyBit'])
+    # Convert cipher bit to text
+    data['result'] = ''
+    for i in range(0, len(data['resultBit']), 8):
+      data['result'] += chr(int(data['resultBit'][i:i+8], 2))
   elif data['method'] == METHOD['OFB']:
     data['result'] = 'OFB'
   elif data['method'] == METHOD['CFB']:
