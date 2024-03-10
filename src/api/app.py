@@ -17,7 +17,6 @@ def encrypt():
     data = request.get_json()
     # Convert text to bit
     data['inputBit'] = ''.join(format(ord(char), '08b') for char in data['inputText'])
-    print(data['inputBit'])
 
   # Output
   # Convert key to bit
