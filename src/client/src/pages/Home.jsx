@@ -11,6 +11,9 @@ import {
   AlertIcon,
   Input,
   Spinner,
+  Radio,
+  RadioGroup,
+  Stack,
 } from '@chakra-ui/react'
 import { INPUT_OPTION, METHOD } from '../utils/constant';
 import axios from 'axios';
@@ -21,9 +24,21 @@ export const Home = () => {
   const [inputFile, setInputFile] = useState(null);
   const [method, setMethod] = useState(METHOD.ECB);
   const [key, setKey] = useState('');
+  const [encryptionLength, setEncryptionLength] = useState(1);
+  const [encryptionLengthList, setEncryptionLengthList] = useState([1]);
   const [errorText, setErrorText] = useState('');
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const getFactor = (n) => {
+    let factors = [];
+    for (let i = 1; i <= n; i++) {
+      if (n % i === 0) {
+        factors.push(i);
+      }
+    }
+    return factors;
+  }
 
   const encrypt = async () => {
     setErrorText('');
@@ -48,6 +63,7 @@ export const Home = () => {
         formData.append('inputFile', inputFile);
         formData.append('method', method);
         formData.append('key', key);
+        formData.append('encryptionLength', encryptionLength);
 
         response = await axios.post(`${import.meta.env.VITE_API_URL}/encrypt`, formData, {
           headers: {
@@ -77,6 +93,7 @@ export const Home = () => {
           inputText,
           method,
           key,
+          encryptionLength,
         });
 
         if (response.data.result) {
@@ -115,6 +132,7 @@ export const Home = () => {
         formData.append('inputFile', inputFile);
         formData.append('method', method);
         formData.append('key', key);
+        formData.append('encryptionLength', encryptionLength);
 
         response = await axios.post(`${import.meta.env.VITE_API_URL}/decrypt`, formData, {
           headers: {
@@ -144,6 +162,7 @@ export const Home = () => {
           inputText,
           method,
           key,
+          encryptionLength,
         });
 
         if (response.data.result) {
@@ -182,7 +201,17 @@ export const Home = () => {
         </FormControl>}
         <FormControl mt="2">
           <FormLabel>Method</FormLabel>
-          <Select borderWidth="1px" borderColor="black" placeholder='Select input option' defaultValue={method} onChange={e => setMethod(e.target.value)}>
+          <Select borderWidth="1px" borderColor="black" placeholder='Select input option' defaultValue={method} onChange={e => {
+              setMethod(e.target.value);
+              if (e.target.value === METHOD.CFB) {
+                setEncryptionLength(1);
+                if (key.length === 0) {
+                  setEncryptionLengthList([1]);
+                } else {
+                  setEncryptionLengthList(getFactor(key.length * 8));
+                }
+              }
+            }}>
             <option value={METHOD.ECB}>{METHOD.ECB}</option>
             <option value={METHOD.CBC}>{METHOD.CBC}</option>
             <option value={METHOD.OFB}>{METHOD.OFB}</option>
@@ -192,8 +221,30 @@ export const Home = () => {
         </FormControl>
         <FormControl mt="2">
           <FormLabel>Key</FormLabel>
-          <Textarea borderWidth="1px" borderColor="black" placeholder="Input key" size="sm" rows={1} onChange={e => setKey(e.target.value)} />
+          <Textarea borderWidth="1px" borderColor="black" placeholder="Input key" size="sm" rows={1} onChange={e => {
+            setKey(e.target.value)
+            if (method === METHOD.CFB) {
+              setEncryptionLength(1);
+              if (e.target.value.length === 0) {
+                setEncryptionLengthList([1]);
+              } else {
+                setEncryptionLengthList(getFactor(e.target.value.length * 8));
+              }
+            }
+          }} />
         </FormControl>
+        {method === METHOD.CFB && (
+          <FormControl mt="2">
+            <FormLabel>Encryption Length (bit)</FormLabel>
+            <RadioGroup value={encryptionLength} onChange={value => setEncryptionLength(parseInt(value))}>
+              <Stack direction="column">
+                {encryptionLengthList.map((length, index) => (
+                  <Radio key={index} value={length}>{length}</Radio>
+                ))}
+              </Stack>
+            </RadioGroup>
+          </FormControl>
+        )}
         <FormControl mt="2">
           <Button colorScheme="green" size="md" mx="1" onClick={encrypt}>Encrypt</Button>
           <Button colorScheme="green" size="md" mx="1" onClick={decrypt}>Decrypt</Button>

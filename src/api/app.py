@@ -4,6 +4,7 @@ from flask_cors import CORS
 from utils.constant import METHOD
 from utils.ECB.service import extend_bit_ecb, encrypt_ecb, decrypt_ecb
 from utils.CBC.service import extend_bit_cbc, encrypt_cbc, decrypt_cbc
+from utils.CFB.service import extend_bit_cfb, encrypt_cfb, decrypt_cfb
 
 app = Flask(__name__)
 CORS(app)
@@ -45,7 +46,14 @@ def encrypt():
   elif data['method'] == METHOD['OFB']:
     data['result'] = 'OFB'
   elif data['method'] == METHOD['CFB']:
-    data['result'] = 'CFB'
+    # Extend plainteks bit
+    data['inputBit'] = extend_bit_cfb(data['inputBit'], data['encryptionLength'])
+    # Encrypt plainteks bit
+    data['resultBit'] = encrypt_cfb(data['inputBit'], data['keyBit'], data['encryptionLength'])
+    # Convert cipher bit to text
+    data['result'] = ''
+    for i in range(0, len(data['resultBit']), 8):
+      data['result'] += chr(int(data['resultBit'][i:i+8], 2))
   elif data['method'] == METHOD['COUNTER']:
     data['result'] = 'Counter'
 
@@ -79,7 +87,7 @@ def decrypt():
   elif data['method'] == METHOD['CBC']:
     # Extend plainteks bit
     data['inputBit'] = extend_bit_cbc(data['inputBit'], data['keyBit'])
-    # Encrypt plainteks bit
+    # Decrypt plainteks bit
     data['resultBit'] = decrypt_cbc(data['inputBit'], data['keyBit'])
     # Convert cipher bit to text
     data['result'] = ''
@@ -88,7 +96,14 @@ def decrypt():
   elif data['method'] == METHOD['OFB']:
     data['result'] = 'OFB'
   elif data['method'] == METHOD['CFB']:
-    data['result'] = 'CFB'
+    # Extend plainteks bit
+    data['inputBit'] = extend_bit_cfb(data['inputBit'], data['encryptionLength'])
+    # Decrypt plainteks bit
+    data['resultBit'] = decrypt_cfb(data['inputBit'], data['keyBit'], data['encryptionLength'])
+    # Convert cipher bit to text
+    data['result'] = ''
+    for i in range(0, len(data['resultBit']), 8):
+      data['result'] += chr(int(data['resultBit'][i:i+8], 2))
   elif data['method'] == METHOD['COUNTER']:
     data['result'] = 'Counter'
 
