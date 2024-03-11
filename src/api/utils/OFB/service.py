@@ -7,7 +7,7 @@ def extend_bit_ofb(bit, encryption_length):
   return bit
 
 '''
-It involves feeding the successive output blocks from the underlying block cipher back to it. These feedback blocks provide string of bits to feed the encryption algorithm which act as the key-stream generator as in case of CFB mode.
+r-bit dari hasil enkripsi antrian disalin menjadi elemen posisi paling kanan di antrian
 '''
 # Encrypt bit using OFB
 def encrypt_ofb(bit, key, encryption_length):
@@ -16,7 +16,6 @@ def encrypt_ofb(bit, key, encryption_length):
     if (i == 0):
       queue = format(int(IV, 2), f'0{len(key)}b')
     encrypted_queue = format(int(queue, 2) ^ int(key, 2), f'0{len(key)}b')
-    encrypted_queue = encrypted_queue[1:] + encrypted_queue[0]
     block = bit[i:i+encryption_length]
     xor_result = int(block, 2) ^ int(encrypted_queue[:encryption_length], 2)
     xor_result = format(xor_result, f'0{encryption_length}b')
@@ -31,7 +30,6 @@ def decrypt_ofb(bit, key, encryption_length):
     if (i == 0):
       queue = format(int(IV, 2), f'0{len(key)}b')
     encrypted_queue = format(int(queue, 2) ^ int(key, 2), f'0{len(key)}b')
-    encrypted_queue = encrypted_queue[1:] + encrypted_queue[0]
     block = bit[i:i+encryption_length]
     xor_result = int(block, 2) ^ int(encrypted_queue[:encryption_length], 2)
     xor_result = format(xor_result, f'0{encryption_length}b')
