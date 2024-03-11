@@ -203,7 +203,7 @@ export const Home = () => {
           <FormLabel>Method</FormLabel>
           <Select borderWidth="1px" borderColor="black" placeholder='Select input option' defaultValue={method} onChange={e => {
               setMethod(e.target.value);
-              if (e.target.value === METHOD.CFB) {
+              if (e.target.value === METHOD.CFB || e.target.value === METHOD.OFB) {
                 setEncryptionLength(1);
                 if (key.length === 0) {
                   setEncryptionLengthList([1]);
@@ -223,7 +223,7 @@ export const Home = () => {
           <FormLabel>Key</FormLabel>
           <Textarea borderWidth="1px" borderColor="black" placeholder="Input key" size="sm" rows={1} onChange={e => {
             setKey(e.target.value)
-            if (method === METHOD.CFB) {
+            if (method === METHOD.CFB || method === METHOD.OFB) {
               setEncryptionLength(1);
               if (e.target.value.length === 0) {
                 setEncryptionLengthList([1]);
@@ -233,7 +233,7 @@ export const Home = () => {
             }
           }} />
         </FormControl>
-        {method === METHOD.CFB && (
+        {(method === METHOD.CFB || method === METHOD.OFB) && (
           <FormControl mt="2">
             <FormLabel>Encryption Length (bit)</FormLabel>
             <RadioGroup value={encryptionLength} onChange={value => setEncryptionLength(parseInt(value))}>

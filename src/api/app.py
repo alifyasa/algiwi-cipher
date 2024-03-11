@@ -5,6 +5,7 @@ from utils.constant import METHOD
 from utils.ECB.service import extend_bit_ecb, encrypt_ecb, decrypt_ecb
 from utils.CBC.service import extend_bit_cbc, encrypt_cbc, decrypt_cbc
 from utils.CFB.service import extend_bit_cfb, encrypt_cfb, decrypt_cfb
+from utils.OFB.service import extend_bit_ofb, encrypt_ofb, decrypt_ofb
 
 app = Flask(__name__)
 CORS(app)
@@ -29,33 +30,29 @@ def encrypt():
     data['inputBit'] = extend_bit_ecb(data['inputBit'], data['keyBit'])
     # Encrypt plainteks bit
     data['resultBit'] = encrypt_ecb(data['inputBit'], data['keyBit'])
-    # Convert cipher bit to text
-    data['result'] = ''
-    for i in range(0, len(data['resultBit']), 8):
-      data['result'] += chr(int(data['resultBit'][i:i+8], 2))
   # CBC
   elif data['method'] == METHOD['CBC']:
     # Extend plainteks bit
     data['inputBit'] = extend_bit_cbc(data['inputBit'], data['keyBit'])
     # Encrypt plainteks bit
     data['resultBit'] = encrypt_cbc(data['inputBit'], data['keyBit'])
-    # Convert cipher bit to text
-    data['result'] = ''
-    for i in range(0, len(data['resultBit']), 8):
-      data['result'] += chr(int(data['resultBit'][i:i+8], 2))
   elif data['method'] == METHOD['OFB']:
-    data['result'] = 'OFB'
+    # Extend plainteks bit
+    data['inputBit'] = extend_bit_cfb(data['inputBit'], data['encryptionLength'])
+    # Encrypt plainteks bit
+    data['resultBit'] = encrypt_ofb(data['inputBit'], data['keyBit'], data['encryptionLength'])
   elif data['method'] == METHOD['CFB']:
     # Extend plainteks bit
     data['inputBit'] = extend_bit_cfb(data['inputBit'], data['encryptionLength'])
     # Encrypt plainteks bit
     data['resultBit'] = encrypt_cfb(data['inputBit'], data['keyBit'], data['encryptionLength'])
-    # Convert cipher bit to text
-    data['result'] = ''
-    for i in range(0, len(data['resultBit']), 8):
-      data['result'] += chr(int(data['resultBit'][i:i+8], 2))
   elif data['method'] == METHOD['COUNTER']:
     data['result'] = 'Counter'
+
+  # Convert cipher bit to text
+  data['result'] = ''
+  for i in range(0, len(data['resultBit']), 8):
+    data['result'] += chr(int(data['resultBit'][i:i+8], 2))
 
   return jsonify(data)
 
@@ -79,33 +76,29 @@ def decrypt():
     data['inputBit'] = extend_bit_ecb(data['inputBit'], data['keyBit'])
     # Decrypt plainteks bit
     data['resultBit'] = decrypt_ecb(data['inputBit'], data['keyBit'])
-    # Convert cipher bit to text
-    data['result'] = ''
-    for i in range(0, len(data['resultBit']), 8):
-      data['result'] += chr(int(data['resultBit'][i:i+8], 2))
   # CBC
   elif data['method'] == METHOD['CBC']:
     # Extend plainteks bit
     data['inputBit'] = extend_bit_cbc(data['inputBit'], data['keyBit'])
     # Decrypt plainteks bit
     data['resultBit'] = decrypt_cbc(data['inputBit'], data['keyBit'])
-    # Convert cipher bit to text
-    data['result'] = ''
-    for i in range(0, len(data['resultBit']), 8):
-      data['result'] += chr(int(data['resultBit'][i:i+8], 2))
   elif data['method'] == METHOD['OFB']:
-    data['result'] = 'OFB'
+    # Extend plainteks bit
+    data['inputBit'] = extend_bit_ofb(data['inputBit'], data['encryptionLength'])
+    # Encrypt plainteks bit
+    data['resultBit'] = decrypt_cfb(data['inputBit'], data['keyBit'], data['encryptionLength'])
   elif data['method'] == METHOD['CFB']:
     # Extend plainteks bit
     data['inputBit'] = extend_bit_cfb(data['inputBit'], data['encryptionLength'])
     # Decrypt plainteks bit
     data['resultBit'] = decrypt_cfb(data['inputBit'], data['keyBit'], data['encryptionLength'])
-    # Convert cipher bit to text
-    data['result'] = ''
-    for i in range(0, len(data['resultBit']), 8):
-      data['result'] += chr(int(data['resultBit'][i:i+8], 2))
   elif data['method'] == METHOD['COUNTER']:
     data['result'] = 'Counter'
+
+  # Convert cipher bit to text
+  data['result'] = ''
+  for i in range(0, len(data['resultBit']), 8):
+    data['result'] += chr(int(data['resultBit'][i:i+8], 2))
 
   return jsonify(data)
 

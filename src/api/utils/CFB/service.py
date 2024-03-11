@@ -22,9 +22,9 @@ def encrypt_cfb(bit, key, encryption_length):
   for i in range(0, len(bit), encryption_length):
     if (i == 0):
       X = format(int(IV, 2), f'0{len(key)}b')
-    X = format(int(X, 2) ^ int(key, 2), f'0{len(key)}b')
+    encrypted_key = format(int(X, 2) ^ int(key, 2), f'0{len(key)}b')
     block = bit[i:i+encryption_length]
-    xor_result = int(block, 2) ^ int(X[:encryption_length], 2)
+    xor_result = int(block, 2) ^ int(encrypted_key[:encryption_length], 2)
     xor_result = format(xor_result, f'0{encryption_length}b')
     X = X[encryption_length:] + xor_result
     encrypted_bit += xor_result
@@ -36,9 +36,9 @@ def decrypt_cfb(bit, key, encryption_length):
   for i in range(0, len(bit), encryption_length):
     if (i == 0):
       X = format(int(IV, 2), f'0{len(key)}b')
-    X = format(int(X, 2) ^ int(key, 2), f'0{len(key)}b')
+    encrypted_key = format(int(X, 2) ^ int(key, 2), f'0{len(key)}b')
     block = bit[i:i+encryption_length]
-    xor_result = int(block, 2) ^ int(X[:encryption_length], 2)
+    xor_result = int(block, 2) ^ int(encrypted_key[:encryption_length], 2)
     xor_result = format(xor_result, f'0{encryption_length}b')
     X = X[encryption_length:] + block
     decrypted_bit += xor_result
