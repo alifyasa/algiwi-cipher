@@ -38,7 +38,7 @@ def encrypt():
     data['resultBit'] = encrypt_cbc(data['inputBit'], data['keyBit'])
   elif data['method'] == METHOD['OFB']:
     # Extend plainteks bit
-    data['inputBit'] = extend_bit_cfb(data['inputBit'], data['encryptionLength'])
+    data['inputBit'] = extend_bit_ofb(data['inputBit'], data['encryptionLength'])
     # Encrypt plainteks bit
     data['resultBit'] = encrypt_ofb(data['inputBit'], data['keyBit'], data['encryptionLength'])
   elif data['method'] == METHOD['CFB']:
@@ -86,7 +86,7 @@ def decrypt():
     # Extend plainteks bit
     data['inputBit'] = extend_bit_ofb(data['inputBit'], data['encryptionLength'])
     # Encrypt plainteks bit
-    data['resultBit'] = decrypt_cfb(data['inputBit'], data['keyBit'], data['encryptionLength'])
+    data['resultBit'] = decrypt_ofb(data['inputBit'], data['keyBit'], data['encryptionLength'])
   elif data['method'] == METHOD['CFB']:
     # Extend plainteks bit
     data['inputBit'] = extend_bit_cfb(data['inputBit'], data['encryptionLength'])
