@@ -15,7 +15,7 @@ Encrypt:
 def encrypt_cbc(bit, key):
   encrypted_bit = ""
   for i in range(0, len(bit), len(key)):
-    # XOR-kan blok plainteks Pi dengan K
+    # XOR-kan blok plainteks Pi dengan K dan dengan hasil XOR sebelumnya
     block = bit[i:i+len(key)]
     if i == 0:
       xor_result = int(block, 2) ^ int(IV, 2)
@@ -40,7 +40,7 @@ def decrypt_cbc(bit, key):
     # geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kanan
     block = bit[i:i+len(key)]
     shift_result = block[-1] + block[:-1]
-    # XOR-kan blok cipher Ci dengan K
+    # XOR-kan blok cipher Ci dengan K dan dengan hasil XOR sebelumnya
     xor_result = int(shift_result, 2) ^ int(key, 2)
     if i == 0:
       xor_result = xor_result ^ int(IV, 2)
