@@ -1,3 +1,5 @@
+IV = '0'
+
 def extend_bit_cbc(bit, key):
   # Panjang bit harus kelipatan panjang key
   while len(bit) % len(key) != 0:
@@ -16,7 +18,7 @@ def encrypt_cbc(bit, key):
     # XOR-kan blok plainteks Pi dengan K
     block = bit[i:i+len(key)]
     if i == 0:
-      xor_result = int(block, 2)
+      xor_result = int(block, 2) ^ int(IV, 2)
     else:
       xor_result = int(block, 2) ^ int(encrypted_bit[i-len(key):i], 2)
     xor_result = xor_result ^ int(key, 2)
@@ -41,7 +43,7 @@ def decrypt_cbc(bit, key):
     # XOR-kan blok cipher Ci dengan K
     xor_result = int(shift_result, 2) ^ int(key, 2)
     if i == 0:
-      xor_result = xor_result
+      xor_result = xor_result ^ int(IV, 2)
     else:
       xor_result = xor_result ^ int(bit[i-len(key):i], 2)
     xor_result = format(xor_result, f'0{len(key)}b')
