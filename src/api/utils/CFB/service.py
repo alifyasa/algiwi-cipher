@@ -7,6 +7,8 @@ def extend_bit_cfb(bit, encryption_length):
   return bit
 
 '''
+EK(Xi) = (Xi + K) << 1
+
 r-bit dari hasil enkripsi plaintext menjadi elemen posisi paling kanan di antrian
 '''
 # Encrypt bit using CFB
@@ -16,6 +18,7 @@ def encrypt_cfb(bit, key, encryption_length):
     if (i == 0):
       queue = format(int(IV, 2), f'0{len(key)}b')
     encrypted_queue = format(int(queue, 2) ^ int(key, 2), f'0{len(key)}b')
+    encrypted_queue = encrypted_queue[1:] + encrypted_queue[0]
     block = bit[i:i+encryption_length]
     xor_result = int(block, 2) ^ int(encrypted_queue[:encryption_length], 2)
     xor_result = format(xor_result, f'0{encryption_length}b')
@@ -30,6 +33,7 @@ def decrypt_cfb(bit, key, encryption_length):
     if (i == 0):
       queue = format(int(IV, 2), f'0{len(key)}b')
     encrypted_queue = format(int(queue, 2) ^ int(key, 2), f'0{len(key)}b')
+    encrypted_queue = encrypted_queue[1:] + encrypted_queue[0]
     block = bit[i:i+encryption_length]
     xor_result = int(block, 2) ^ int(encrypted_queue[:encryption_length], 2)
     xor_result = format(xor_result, f'0{encryption_length}b')

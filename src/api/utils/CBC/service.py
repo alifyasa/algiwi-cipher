@@ -7,6 +7,8 @@ def extend_bit_cbc(bit, key):
   return bit
 
 '''
+EK(P) = (P + K) << 1
+
 Encrypt:
 1. XOR-kan blok plainteks Pi dengan K dan dengan hasil XOR sebelumnya
 2. geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kiri
