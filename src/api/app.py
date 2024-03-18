@@ -16,6 +16,8 @@ def encrypt():
   if request.form:
     data = request.form.to_dict()
     file = request.files['inputFile']
+    file_name = file.filename
+    data['inputBit'] = ''.join(format(byte, '08b') for byte in file.read())
   else:
     data = request.get_json()
     # Convert text to bit
@@ -52,10 +54,17 @@ def encrypt():
     # Encrypt plainteks bit
     data['resultBit'] = encrypt_counter(data['inputBit'], data['keyBit'])
 
+  # Convert cipher bit to file
+  if (request.form):
+    result = bytes([int(data['resultBit'][i:i+8], 2) for i in range(0, len(data['resultBit']), 8)])
+    with open(f'output/[ENCRYPTED] {file_name}', 'wb') as file:
+      file.write(result)
+    data['result'] = f'File has been encrypted in output/[ENCRYPTED] {file_name}'
   # Convert cipher bit to text
-  data['result'] = ''
-  for i in range(0, len(data['resultBit']), 8):
-    data['result'] += chr(int(data['resultBit'][i:i+8], 2))
+  else:
+    data['result'] = ''
+    for i in range(0, len(data['resultBit']), 8):
+      data['result'] += chr(int(data['resultBit'][i:i+8], 2))
 
   return jsonify(data)
 
@@ -65,6 +74,8 @@ def decrypt():
   if request.form:
     data = request.form.to_dict()
     file = request.files['inputFile']
+    file_name = file.filename
+    data['inputBit'] = ''.join(format(byte, '08b') for byte in file.read())
   else:
     data = request.get_json()
     # Convert text to bit
@@ -101,10 +112,17 @@ def decrypt():
     # Encrypt plainteks bit
     data['resultBit'] = decrypt_counter(data['inputBit'], data['keyBit'])
 
+  # Convert cipher bit to file
+  if (request.form):
+    result = bytes([int(data['resultBit'][i:i+8], 2) for i in range(0, len(data['resultBit']), 8)])
+    with open(f'output/[DECRYPTED] {file_name}', 'wb') as file:
+      file.write(result)
+    data['result'] = f'File has been decrypted in output/[DECRYPTED] {file_name}'
   # Convert cipher bit to text
-  data['result'] = ''
-  for i in range(0, len(data['resultBit']), 8):
-    data['result'] += chr(int(data['resultBit'][i:i+8], 2))
+  else:
+    data['result'] = ''
+    for i in range(0, len(data['resultBit']), 8):
+      data['result'] += chr(int(data['resultBit'][i:i+8], 2))
 
   return jsonify(data)
 
