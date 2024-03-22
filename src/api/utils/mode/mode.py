@@ -9,6 +9,18 @@ class Mode():
         self.mode_method = mode_method
         self.start_time = datetime.now()
         self.end_time = datetime.now()
+    
+    def set_bit(self, bit):
+        self.bit = bit
+
+    def set_key(self,key):
+        self.key = key
+
+    def set_mode_method(self,mode_method):
+        self.mode_method = mode_method
+
+    def set_encryption_length(self,encryption_length):
+        self.encryption_length = encryption_length
 
     def extend_bit_by_key(self):
         # Panjang bit harus kelipatan panjang key
