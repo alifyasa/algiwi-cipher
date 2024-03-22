@@ -28,6 +28,7 @@ export const Home = () => {
   const [encryptionLengthList, setEncryptionLengthList] = useState([1]);
   const [errorText, setErrorText] = useState('');
   const [result, setResult] = useState('');
+  const [time, setTime] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const getFactor = (n) => {
@@ -73,6 +74,7 @@ export const Home = () => {
 
         if (response.data.result) {
           setResult(response.data.result);
+          setTime(response.data.time);
         } else {
           setErrorText(response.data.error);
         }
@@ -98,6 +100,7 @@ export const Home = () => {
 
         if (response.data.result) {
           setResult(response.data.result);
+          setTime(response.data.time);
         } else {
           setErrorText(response.data.error);
         }
@@ -142,6 +145,7 @@ export const Home = () => {
 
         if (response.data.result) {
           setResult(response.data.result);
+          setTime(response.data.time);
         } else {
           setErrorText(response.data.error);
         }
@@ -167,6 +171,7 @@ export const Home = () => {
 
         if (response.data.result) {
           setResult(response.data.result);
+          setTime(response.data.time);
         } else {
           setErrorText(response.data.error);
         }
@@ -193,7 +198,7 @@ export const Home = () => {
         </FormControl>
         {inputOption === INPUT_OPTION.TEXT && <FormControl mt="2">
           <FormLabel>Text</FormLabel>
-          <Textarea borderWidth="1px" borderColor="black" placeholder="Input plain text" size="sm" rows={5} onChange={e => setInputText(e.target.value)} />
+          <Textarea borderWidth="1px" borderColor="black" placeholder="Input plain text" size="sm" rows={5} value={inputText} onChange={e => setInputText(e.target.value)} />
         </FormControl>}
         {inputOption === INPUT_OPTION.FILE && <FormControl mt="2">
           <FormLabel>File</FormLabel>
@@ -258,6 +263,10 @@ export const Home = () => {
         <FormControl mt="2">
           <FormLabel>Result {loading && <Spinner color="green.500" />}</FormLabel>
           <Textarea borderWidth="1px" borderColor="gray" color="gray" size="sm" rows={5} value={result} readOnly />
+        </FormControl>
+        <FormControl mt="2">
+          <FormLabel>Time Elapsed</FormLabel>
+          <Textarea borderWidth="1px" borderColor="gray" color="gray" size="sm" rows={1} value={`${time} second`} readOnly />
         </FormControl>
       </Box>
     </>

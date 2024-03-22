@@ -6,6 +6,7 @@ from utils.CBC.service import extend_bit_cbc, encrypt_cbc, decrypt_cbc
 from utils.CFB.service import extend_bit_cfb, encrypt_cfb, decrypt_cfb
 from utils.OFB.service import extend_bit_ofb, encrypt_ofb, decrypt_ofb
 from utils.COUNTER.service import extend_bit_counter, encrypt_counter, decrypt_counter
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -18,6 +19,7 @@ def encrypt():
     file = request.files['inputFile']
     file_name = file.filename
     data['inputBit'] = ''.join(format(byte, '08b') for byte in file.read())
+    data['encryptionLength'] = int(data['encryptionLength'])
   else:
     data = request.get_json()
     # Convert text to bit
@@ -26,6 +28,8 @@ def encrypt():
   # Output
   # Convert key to bit
   data['keyBit'] = ''.join(format(ord(char), '08b') for char in data['key'])
+  # Start time
+  start_time = datetime.now()
   # ECB
   if data['method'] == METHOD['ECB']:
     # Extend plainteks bit
@@ -53,6 +57,9 @@ def encrypt():
     data['inputBit'] = extend_bit_counter(data['inputBit'], data['keyBit'])
     # Encrypt plainteks bit
     data['resultBit'] = encrypt_counter(data['inputBit'], data['keyBit'])
+  # End time
+  end_time = datetime.now()
+  data['time'] = (end_time - start_time).total_seconds()
 
   # Convert cipher bit to file
   if (request.form):
@@ -76,6 +83,7 @@ def decrypt():
     file = request.files['inputFile']
     file_name = file.filename
     data['inputBit'] = ''.join(format(byte, '08b') for byte in file.read())
+    data['encryptionLength'] = int(data['encryptionLength'])
   else:
     data = request.get_json()
     # Convert text to bit
@@ -84,6 +92,8 @@ def decrypt():
   # Output
   # Convert key to bit
   data['keyBit'] = ''.join(format(ord(char), '08b') for char in data['key'])
+  # Start time
+  start_time = datetime.now()
   # ECB
   if data['method'] == METHOD['ECB']:
     # Extend plainteks bit
@@ -111,6 +121,9 @@ def decrypt():
     data['inputBit'] = extend_bit_counter(data['inputBit'], data['keyBit'])
     # Encrypt plainteks bit
     data['resultBit'] = decrypt_counter(data['inputBit'], data['keyBit'])
+  # End time
+  end_time = datetime.now()
+  data['time'] = (end_time - start_time).total_seconds()
 
   # Convert cipher bit to file
   if (request.form):
