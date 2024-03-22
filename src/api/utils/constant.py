@@ -10,3 +10,7 @@ METHOD = {
   'CFB': 'CFB',
   'COUNTER': 'Counter',
 }
+
+BLOCK_SIZE = 128 # bit
+KEY_SIZE_MIN = 128 # bit
+KEY_SIZE_MAX = 256 # bit
