@@ -11,7 +11,7 @@
 
 ### S-Box and P-Box Generator
 
-```
+```console
 user@user:~/algiwi-cipher/src/api/utils/cipher$ python3 generator/s_box.py # Generate S-Box
 ...
 user@user:~/algiwi-cipher/src/api/utils/cipher$ python3 generator/p_box.py # Generate P-Box
@@ -20,7 +20,7 @@ user@user:~/algiwi-cipher/src/api/utils/cipher$ python3 generator/p_box.py # Gen
 
 ### Sub-Key Generation
 
-```
+```console
 user@user:~/algiwi-cipher/src/api/utils/cipher$ python3 subkey.py
 Key           : ...
 Sub-Key  0    : ...
@@ -30,7 +30,7 @@ Sub-Key 15    : ...
 
 ### Feistel Network
 
-```
+```console
 user@user:~/algiwi-cipher/src/api/utils/cipher$ python3 feistel.py
 Data          : 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001100011011010110010110011
 Feistel Result: 00011110111100101011001111010010000000010010011001111110111100100111010011001110110000011000000111010101000110001001111110000001
@@ -39,7 +39,7 @@ Original      : 0000000000000000000000000000000000000000000000000000000000000000
 
 ### Encryption and Decryption
 
-```
+```console
 user@user:~/algiwi-cipher/src/api/utils/cipher$ python3 service.py
 Plaintext : 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001001100011010010010100010
 Key       : 00000000000000000000000000000000000000000000000000000000000000000110000101101100011010010110011001111001011000010111001101100001
