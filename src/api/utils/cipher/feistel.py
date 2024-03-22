@@ -1,12 +1,11 @@
+from utils.cipher.substitution import substitute
+from utils.cipher.permutation import permutate
 
-
-def round_function(feistel_half, round_key):
+def round_function(feistel_half: int, round_key: int):
     # block is 128 bit/16 bytes, half is 64 bit/8 bytes
 
-    # Substitution
-
-    # Permutation
-    pass
+    substituted = substitute(feistel_half, round_key)
+    return permutate(substituted)
 
 def feistel_round(left: int, right, round_key: int) -> int:
     """
