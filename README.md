@@ -4,13 +4,13 @@ Made by Alif, Gilang, and Willy untuk mata kuliah IF4020 Kriptografi. Program me
 
 ## Requirement program dan instalasi
 
-Pengunduhan Python dapat dilakukan melalui situs berikut.
-
-https://www.python.org/downloads/
-
 Pengunduhan Node.js dapat dilakukan melalui situs berikut.
 
 https://nodejs.org/en/download/
+
+Pengunduhan Python dapat dilakukan melalui situs berikut.
+
+https://www.python.org/downloads/
 
 ## Cara menggunakan program
 
