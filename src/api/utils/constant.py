@@ -14,3 +14,7 @@ METHOD = {
 BLOCK_SIZE = 128 # bit
 KEY_SIZE_MIN = 128 # bit
 KEY_SIZE_MAX = 256 # bit
+
+# Padding
+IV = '0'
+COUNTER = '0'
