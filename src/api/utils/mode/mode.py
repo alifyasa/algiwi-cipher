@@ -1,4 +1,5 @@
 from utils.constant import *
+from datetime import datetime
 
 class Mode():
     def __init__(self, bit, key, mode_method, encryption_length=0):
@@ -6,18 +7,18 @@ class Mode():
         self.key = key
         self.encryption_length = encryption_length
         self.mode_method = mode_method
-    
+        self.start_time = datetime.now()
+        self.end_time = datetime.now()
+
     def extend_bit_by_key(self):
         # Panjang bit harus kelipatan panjang key
-        while len(bit) % len(self.key) != 0:
-            bit += '0'
-        return bit
-    
+        while len(self.bit) % len(self.key) != 0:
+            self.bit += '0'
+
     def extend_bit_by_encryption_length(self):
         # Panjang bit harus kelipatan panjang enkripsi
-        while len(bit) % self.encryption_length != 0:
-            bit += '0'
-        return bit
+        while len(self.bit) % self.encryption_length != 0:
+            self.bit += '0'
 
     # Encrypt bit using CBC
     def encrypt_cbc(self):
@@ -210,3 +211,65 @@ class Mode():
             queue = queue[self.encryption_length:] + block
             decrypted_bit += xor_result
         return decrypted_bit
+    
+    def encrypt(self):
+        ret = ""
+
+        self.start_time = datetime.now()
+        # Put padding on bit input
+        if self.mode_method == METHOD['CFB'] or self.mode_method == METHOD['OFB']:
+            self.extend_bit_by_encryption_length()
+        else:
+            self.extend_bit_by_key()
+
+        if self.mode_method == METHOD['ECB']:
+            # Encrypt plainteks bit
+            ret = self.encrypt_ecb()
+        elif self.mode_method == METHOD['CBC']:
+            # Encrypt plainteks bit
+            ret = self.encrypt_cbc()
+        elif self.mode_method == METHOD['OFB']:
+            # Encrypt plainteks bit
+            ret = self.encrypt_ofb()
+        elif self.mode_method == METHOD['CFB']:
+            # Encrypt plainteks bit
+            ret = self.encrypt_cfb()
+        elif self.mode_method == METHOD['COUNTER']:
+            # Encrypt plainteks bit
+            ret = self.encrypt_counter()
+
+        self.end_time = datetime.now()
+        return ret
+    
+    def decrypt(self):
+        ret = ""
+
+        self.start_time = datetime.now()
+        # Put padding on bit input
+        if self.mode_method == METHOD['CFB'] or self.mode_method == METHOD['OFB']:
+            self.extend_bit_by_encryption_length()
+        else:
+            self.extend_bit_by_key()
+
+        if self.mode_method == METHOD['ECB']:
+            # Decrypt plainteks bit
+            ret = self.decrypt_ecb()
+        elif self.mode_method == METHOD['CBC']:
+            # Decrypt plainteks bit
+            ret = self.decrypt_cbc()
+        elif self.mode_method == METHOD['OFB']:
+            # Decrypt plainteks bit
+            ret = self.decrypt_ofb()
+        elif self.mode_method == METHOD['CFB']:
+            # Decrypt plainteks bit
+            ret = self.decrypt_cfb()
+        elif self.mode_method == METHOD['COUNTER']:
+            # Decrypt plainteks bit
+            ret = self.decrypt_counter()
+
+        self.end_time = datetime.now()
+        return ret
+
+    def get_time_execution(self):
+        return (self.end_time - self.start_time).total_seconds()
+
