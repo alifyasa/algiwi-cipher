@@ -1,6 +1,16 @@
 # AlGiWi Cipher
 
-Made by Alif, Gilang, and Willy untuk mata kuliah IF4020 Kriptografi.
+Made by Alif, Gilang, and Willy untuk mata kuliah IF4020 Kriptografi. Program menggunakan React + Vite + Typescript untuk frontend dan Flask untuk backend yang dibuat untuk mengimplementasikan enkripsi dan dekripsi pada cipher block. Pengguna akan memberikan input berupa file atau pesan yang diketik, metode, dan key yang digunakan, lalu program akan mengeluarkan hasil enkripsi atau dekripsi pada layar.
+
+## Requirement program dan instalasi
+
+Pengunduhan Python dapat dilakukan melalui situs berikut.
+
+https://www.python.org/downloads/
+
+Pengunduhan Node.js dapat dilakukan melalui situs berikut.
+
+https://nodejs.org/en/download/
 
 ## Cara menggunakan program
 
