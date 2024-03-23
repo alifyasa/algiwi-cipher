@@ -1,14 +1,16 @@
-from subkey import generate_sub_keys
-from feistel import feistel_network
+from utils.cipher.subkey import generate_sub_keys
+from utils.cipher.feistel import feistel_network
+# from subkey import generate_sub_keys
+# from feistel import feistel_network
 
-def encrypt(block_plaintext: int, key: int) -> int:
+def encrypt_block(block_plaintext: int, key: int) -> int:
     data_len = len(f"{block_plaintext:08b}")
     assert data_len <= 128, f"Input size {data_len}, expected less than 128"
     sub_keys = generate_sub_keys(key, 16)
     ciphertext = feistel_network(block_plaintext, sub_keys)
     return ciphertext
 
-def decrypt(block_ciphertext:int, key: int) -> int:
+def decrypt_block(block_ciphertext:int, key: int) -> int:
     data_len = len(f"{block_ciphertext:08b}")
     assert data_len <= 128, f"Input size {data_len}, expected less than 128"
     sub_keys = generate_sub_keys(key, 16)
@@ -23,10 +25,10 @@ def test():
     print(f"Plaintext : {plaintext:0128b}")
     print(f"Key       : {formatted_key:0128b}")
 
-    ciphertext = encrypt(plaintext, formatted_key)
+    ciphertext = encrypt_block(plaintext, formatted_key)
     print(f"Ciphertext: {ciphertext:0128b}")
 
-    decrypted_ciphertext = decrypt(ciphertext, formatted_key)
+    decrypted_ciphertext = decrypt_block(ciphertext, formatted_key)
     print(f"Decrypted : {decrypted_ciphertext:0128b}")
 
 if __name__ == "__main__":

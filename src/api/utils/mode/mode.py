@@ -1,5 +1,6 @@
 from utils.constant import *
 from datetime import datetime
+from utils.cipher.service import *
 
 class Mode():
     def __init__(self, bit, key, mode_method, encryption_length=0):
@@ -42,6 +43,12 @@ class Mode():
         2. geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kiri
         '''
         encrypted_bit = ""
+        # # Calculate the number of zeros to add
+
+        # # Add zeros to the beginning of the string
+        if(len(self.key)<128):
+           self.key = self.key.zfill(128)
+
         for i in range(0, len(self.bit), len(self.key)):
             # XOR-kan blok plainteks Pi dengan K dan dengan hasil XOR sebelumnya
             block = self.bit[i:i+len(self.key)]
@@ -49,11 +56,16 @@ class Mode():
                 xor_result = int(block, 2) ^ int(IV, 2)
             else:
                 xor_result = int(block, 2) ^ int(encrypted_bit[i-len(self.key):i], 2)
-            xor_result = xor_result ^ int(self.key, 2)
+
+            xor_result = encrypt_block(xor_result, int(self.key,2))
+
             xor_result = format(xor_result, f'0{len(self.key)}b')
+
             # geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kiri
             shift_result = xor_result[1:] + xor_result[0]
+
             encrypted_bit += shift_result
+
         return encrypted_bit
 
     # Decrypt bit using CBC
@@ -64,18 +76,28 @@ class Mode():
         2. XOR-kan blok cipher Ci dengan K dan dengan hasil XOR sebelumnya
         '''
         decrypted_bit = ""
-        for i in range(0, len(self.bit), len(self.key)):
+
+        if(len(self.key)<128):
+           self.key = self.key.zfill(128)
+        length_key = len(self.key)
+
+        for i in range(0, len(self.bit), length_key):
             # geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kanan
-            block = self.bit[i:i+len(self.key)]
+            block = self.bit[i:i+length_key]
+
             shift_result = block[-1] + block[:-1]
+    
+            xor_result = decrypt_block(int(shift_result, 2), int(self.key,2))
+
             # XOR-kan blok cipher Ci dengan K dan dengan hasil XOR sebelumnya
-            xor_result = int(shift_result, 2) ^ int(self.key, 2)
             if i == 0:
                 xor_result = xor_result ^ int(IV, 2)
             else:
-                xor_result = xor_result ^ int(self.bit[i-len(self.key):i], 2)
-            xor_result = format(xor_result, f'0{len(self.key)}b')
+                xor_result = xor_result ^ int(self.bit[i-length_key:i], 2)
+            xor_result = format(xor_result, f'0{length_key}b')
+
             decrypted_bit += xor_result
+
         return decrypted_bit
 
     # Encrypt bit using OFB

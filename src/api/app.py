@@ -4,6 +4,7 @@ from utils.constant import METHOD
 from utils.mode.mode import Mode
 from utils.types import *
 from utils.helper import *
+from utils.cipher.service import *
 
 app = Flask(__name__)
 CORS(app)
@@ -23,11 +24,14 @@ def encrypt():
     mode.set_encryption_length(data['encryptionLength'])
 
   encrypted_data = mode.encrypt()
+
   execution_time = mode.get_time_execution()
 
   result = get_output_result(request.form, encrypted_data, 0, file_name)
 
   res = ResponseResult(time=execution_time, result=result)
+
+  print(res)
 
   return jsonify(res)
 
@@ -45,6 +49,7 @@ def decrypt():
     mode.set_encryption_length(data['encryptionLength'])
 
   decrypted_data = mode.decrypt()
+
   execution_time = mode.get_time_execution()
 
   result = get_output_result(request.form, decrypted_data, 1, file_name)
