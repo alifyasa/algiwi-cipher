@@ -104,11 +104,12 @@ class Mode():
         r-bit dari hasil enkripsi antrian disalin menjadi elemen posisi paling kanan di antrian
         '''
         encrypted_bit = ""
+        length_key = BLOCK_SIZE
         for i in range(0, len(self.bit), self.encryption_length):
             if (i == 0):
                 queue = format(int(IV, 2), f'0{len(self.key)}b')
-            encrypted_queue = format(int(queue, 2) ^ int(self.key, 2), f'0{len(self.key)}b')
-            encrypted_queue = encrypted_queue[1:] + encrypted_queue[0]
+
+            encrypted_queue = format(encrypt_block(int(queue, 2), int(self.key, 2)), f'0{length_key}b')
             block = self.bit[i:i+self.encryption_length]
             xor_result = int(block, 2) ^ int(encrypted_queue[:self.encryption_length], 2)
             xor_result = format(xor_result, f'0{self.encryption_length}b')
@@ -119,11 +120,12 @@ class Mode():
     # Decrypt bit using OFB
     def decrypt_ofb(self):
         decrypted_bit = ""
+        length_key = BLOCK_SIZE
         for i in range(0, len(self.bit), self.encryption_length):
             if (i == 0):
                 queue = format(int(IV, 2), f'0{len(self.key)}b')
-            encrypted_queue = format(int(queue, 2) ^ int(self.key, 2), f'0{len(self.key)}b')
-            encrypted_queue = encrypted_queue[1:] + encrypted_queue[0]
+
+            encrypted_queue = format(encrypt_block(int(queue, 2), int(self.key, 2)), f'0{length_key}b')
             block = self.bit[i:i+self.encryption_length]
             xor_result = int(block, 2) ^ int(encrypted_queue[:self.encryption_length], 2)
             xor_result = format(xor_result, f'0{self.encryption_length}b')
@@ -186,11 +188,11 @@ class Mode():
         for i in range(0, len(self.bit), length_key):
             if (i == 0):
                 counter = format(int(COUNTER, 2), f'0{length_key}b')
-            encrypted_counter = format(int(counter, 2) ^ int(self.key, 2), f'0{length_key}b')
-            encrypted_counter = encrypted_counter[1:] + encrypted_counter[0]
+            encrypted_counter = encrypt_block(int(counter, 2), int(self.key,2))
+
             block = self.bit[i:i+length_key]
 
-            xor_result = encrypt_block(int(block, 2), int(encrypted_counter,2))
+            xor_result = encrypted_counter ^ int(block,2)
             xor_result = format(xor_result, f'0{length_key}b')
             counter = format(int(counter, 2) + 1, f'0{length_key}b')
             encrypted_bit += xor_result
@@ -203,11 +205,11 @@ class Mode():
         for i in range(0, len(self.bit), length_key):
             if (i == 0):
                 counter = format(int(COUNTER, 2), f'0{length_key}b')
-            encrypted_counter = format(int(counter, 2) ^ int(self.key, 2), f'0{length_key}b')
-            encrypted_counter = encrypted_counter[1:] + encrypted_counter[0]
+            encrypted_counter = encrypt_block(int(counter, 2), int(self.key,2))
+
             block = self.bit[i:i+length_key]
 
-            xor_result = decrypt_block(int(block, 2), int(encrypted_counter,2))
+            xor_result = encrypted_counter ^ int(block,2)
             xor_result = format(xor_result, f'0{length_key}b')
             counter = format(int(counter, 2) + 1, f'0{length_key}b')
             decrypted_bit += xor_result
@@ -221,11 +223,11 @@ class Mode():
         r-bit dari hasil enkripsi plaintext menjadi elemen posisi paling kanan di antrian
         '''
         encrypted_bit = ""
+        length_key = BLOCK_SIZE
         for i in range(0, len(self.bit), self.encryption_length):
             if (i == 0):
-                queue = format(int(IV, 2), f'0{len(self.key)}b')
-            encrypted_queue = format(int(queue, 2) ^ int(self.key, 2), f'0{len(self.key)}b')
-            encrypted_queue = encrypted_queue[1:] + encrypted_queue[0]
+                queue = format(int(IV, 2), f'0{length_key}b')
+            encrypted_queue = format(encrypt_block(int(queue, 2), int(self.key, 2)), f'0{length_key}b')
             block = self.bit[i:i+self.encryption_length]
             xor_result = int(block, 2) ^ int(encrypted_queue[:self.encryption_length], 2)
             xor_result = format(xor_result, f'0{self.encryption_length}b')
@@ -236,11 +238,11 @@ class Mode():
     # Decrypt bit using CFB
     def decrypt_cfb(self):
         decrypted_bit = ""
+        length_key = BLOCK_SIZE
         for i in range(0, len(self.bit), self.encryption_length):
             if (i == 0):
-                queue = format(int(IV, 2), f'0{len(self.key)}b')
-            encrypted_queue = format(int(queue, 2) ^ int(self.key, 2), f'0{len(self.key)}b')
-            encrypted_queue = encrypted_queue[1:] + encrypted_queue[0]
+                queue = format(int(IV, 2), f'0{length_key}b')
+            encrypted_queue = format(encrypt_block(int(queue,2), int(self.key,2)), f'0{length_key}b')
             block = self.bit[i:i+self.encryption_length]
             xor_result = int(block, 2) ^ int(encrypted_queue[:self.encryption_length], 2)
             xor_result = format(xor_result, f'0{self.encryption_length}b')
