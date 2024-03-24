@@ -59,6 +59,10 @@ def decrypt():
   execution_time = mode.get_time_execution()
 
   result = get_output_result(request.form, decrypted_data, 1, file_name)
+  if len(result) <= 20:
+    print(f"{'Decrypted Text':<20} - {result}")
+  else:
+    print(f"{'Decrypted Text':<20} - {result[:30]}...{result[-30:]}")
 
   res = ResponseResult(time=execution_time, result=result)
 

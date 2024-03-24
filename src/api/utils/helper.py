@@ -14,6 +14,11 @@ def get_request_mode(request,mode_operation):
         data['encryptionLength'] = int(data['encryptionLength'])
     else:
         data = request.get_json()
+        if len(data['inputText']) <= 20:
+            print(f"{'Input Text Raw':<20} - {data['inputText']}")
+        else:
+            print(f"{'Input Text Raw':<20} - {data['inputText'][:30]}...{data['inputText'][-30:]}")
+
         # Convert text to bit
         if(mode_operation==1):
             data['inputText'] = base64.b64decode(data['inputText'].encode()).decode()
@@ -59,7 +64,6 @@ def bit_to_text(text, mode_operation):
 
     for i in range(0, len(byte_array), 8):
         result += chr(int(byte_array[i:i+8], 2))
-    # Original string
 
     # Encode the string into base64
     if(mode_operation == 0):
