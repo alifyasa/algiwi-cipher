@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from utils.constant import METHOD
 from utils.mode.mode import Mode
@@ -67,6 +67,10 @@ def decrypt():
   res = ResponseResult(time=execution_time, result=result)
 
   return jsonify(res)
+
+@app.route('/api/output/<path:filename>')
+def serve_assets(filename):
+    return send_from_directory('output', filename)
 
 if __name__ == '__main__':
   app.run()

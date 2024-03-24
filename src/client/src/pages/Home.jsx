@@ -18,6 +18,15 @@ import {
 import { INPUT_OPTION, METHOD } from '../utils/constant';
 import axios from 'axios';
 
+function isUrl(str) {
+  try {
+    new URL(str);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
 export const Home = () => {
   const [inputOption, setInputOption] = useState(INPUT_OPTION.TEXT);
   const [inputText, setInputText] = useState('');
@@ -243,7 +252,13 @@ export const Home = () => {
         </FormControl>
         <FormControl mt="2">
           <FormLabel>Result {loading && <Spinner color="green.500" />}</FormLabel>
-          <Textarea borderWidth="1px" borderColor="gray" color="gray" size="sm" rows={5} value={result} readOnly />
+          {
+            result !== '' && isUrl(`${import.meta.env.VITE_API_URL}/${result}`) ? (
+              <a href={`${import.meta.env.VITE_API_URL}/${result}`} target='_blank'>{`${import.meta.env.VITE_API_URL}/${result}`}</a>
+            ) : (
+              <Textarea borderWidth="1px" borderColor="gray" color="gray" size="sm" rows={5} value={result} readOnly />
+            )
+          }
         </FormControl>
         <FormControl mt="2">
           <FormLabel>Time Elapsed</FormLabel>

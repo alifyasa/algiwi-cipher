@@ -50,7 +50,7 @@ def bit_to_file(file_name, text, mode_operation):
     with open(file_path, 'wb') as file:
         file.write(result)
 
-    result = f'File has been {mode} in {root_dir} {file_name}'
+    result = f"{file_path}"
 
     return result
 
