@@ -16,15 +16,14 @@ def get_request_mode(request,mode_operation):
         data = request.get_json()
         # Convert text to bit
         if(mode_operation==1):
-            encoded_bytes = base64.b64decode(data['inputText'])
-            encoded_string = encoded_bytes.decode('utf-8')
-            data['inputText'] = encoded_string
+            data['inputText'] = base64.b64decode(data['inputText'].encode()).decode()
+
         # data['inputBit'] = ''.join(format(ord(char), '08b') for char in data['inputText'])
         data['inputBit'] = string_to_byte_string(data['inputText'])
         pprint("Input Bit Raw", data['inputBit'])
         while len(data['inputBit']) % 128 != 0:
             data['inputBit'] = "0" + data['inputBit']
-    
+
     # Convert key to bit
     data['keyBit'] = ''.join(format(ord(char), '08b') for char in data['key'])
 
@@ -64,9 +63,7 @@ def bit_to_text(text, mode_operation):
 
     # Encode the string into base64
     if(mode_operation == 0):
-        encoded_bytes = base64.b64encode(result.encode('utf-8'))
-        encoded_string = encoded_bytes.decode('utf-8')
-        result = encoded_string
+        result = base64.b64encode(result.encode()).decode()
 
     return result
 
