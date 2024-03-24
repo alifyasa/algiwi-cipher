@@ -47,6 +47,9 @@ export const Home = () => {
         if (key === '') {
           setErrorText('Key cannot be empty');
           return;
+        } else if (key.length * 8 > 128) {
+          setErrorText('Key length cannot be more than 128 bit');
+          return;
         }
 
         const formData = new FormData();
@@ -74,9 +77,11 @@ export const Home = () => {
           return;
         }
 
-        
         if (key === '') {
           setErrorText('Key cannot be empty');
+          return;
+        } else if (key.length * 8 > 128) {
+          setErrorText('Key length cannot be more than 128 bit');
           return;
         }
 
@@ -118,6 +123,9 @@ export const Home = () => {
         if (key === '') {
           setErrorText('Key cannot be empty');
           return;
+        } else if (key.length * 8 > 128) {
+          setErrorText('Key length cannot be more than 128 bit');
+          return;
         }
 
         const formData = new FormData();
@@ -148,6 +156,9 @@ export const Home = () => {
         
         if (key === '') {
           setErrorText('Key cannot be empty');
+          return;
+        } else if (key.length * 8 > 128) {
+          setErrorText('Key length cannot be more than 128 bit');
           return;
         }
 
