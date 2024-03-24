@@ -26,12 +26,14 @@ class Mode():
     def extend_bit_by_key(self):
         # Panjang bit harus kelipatan panjang key
         while len(self.bit) % BLOCK_SIZE != 0:
-            self.bit += '0'
+            # Left Pad
+            self.bit = '0' + self.bit
 
     def extend_bit_by_encryption_length(self):
         # Panjang bit harus kelipatan panjang enkripsi
         while len(self.bit) % self.encryption_length != 0:
-            self.bit += '0'
+            # Left Pad
+            self.bit = '0' + self.bit
 
     # Encrypt bit using CBC
     def encrypt_cbc(self):
@@ -146,9 +148,7 @@ class Mode():
             block = self.bit[i:i+length_key]
             xor_result = encrypt_block(int(block, 2), int(self.key,2))
             xor_result = format(xor_result, f'0{length_key}b')
-            # geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kiri
-            shift_result = xor_result[1:] + xor_result[0]
-            encrypted_bit += shift_result
+            encrypted_bit += xor_result
         return encrypted_bit
 
     # Decrypt bit using ECB
@@ -163,9 +163,9 @@ class Mode():
         for i in range(0, len(self.bit), length_key):
             # geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kanan
             block = self.bit[i:i+length_key]
-            shift_result = block[-1] + block[:-1]
+            # shift_result = block[-1] + block[:-1]
             # XOR-kan blok cipher Ci dengan K
-            xor_result = decrypt_block(int(shift_result, 2), int(self.key,2))
+            xor_result = decrypt_block(int(block, 2), int(self.key,2))
             xor_result = format(xor_result, f'0{length_key}b')
             decrypted_bit += xor_result
         return decrypted_bit

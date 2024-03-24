@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from utils.constant import METHOD
 from utils.mode.mode import Mode
+from utils.logging import pprint
 from utils.types import *
 from utils.helper import *
 from utils.cipher.service import *
@@ -12,9 +13,10 @@ mode = Mode(bit="", key="", mode_method=METHOD['ECB'], encryption_length=0)
 
 @app.route('/api/encrypt', methods=['POST'])
 def encrypt():
+  print("=" * 33, "ENCRYPT", "=" * 33)
+
   # Input
   data, file_name = get_request_mode(request,0)
-
   # Output
   mode.set_bit(data['inputBit'])
   mode.set_key(data['keyBit'])
@@ -23,7 +25,9 @@ def encrypt():
   if data['method'] == METHOD['CFB'] or data['method'] == METHOD['OFB']:
     mode.set_encryption_length(data['encryptionLength'])
 
+  pprint("Input Bit Padded", data['inputBit'])
   encrypted_data = mode.encrypt()
+  pprint("Encrypted Data", encrypted_data)
 
   execution_time = mode.get_time_execution()
 
@@ -31,12 +35,13 @@ def encrypt():
 
   res = ResponseResult(time=execution_time, result=result)
 
-  print(res)
+  # print(res)
 
   return jsonify(res)
 
 @app.route('/api/decrypt', methods=['POST'])
 def decrypt():
+  print("=" * 33, "DECRYPT", "=" * 33)
   # Input
   data, file_name = get_request_mode(request,1)
 
@@ -49,6 +54,7 @@ def decrypt():
     mode.set_encryption_length(data['encryptionLength'])
 
   decrypted_data = mode.decrypt()
+  pprint("Decrypted Data", decrypted_data)
 
   execution_time = mode.get_time_execution()
 

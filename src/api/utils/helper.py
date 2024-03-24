@@ -1,5 +1,8 @@
 import base64
 
+from utils.convert import string_to_byte_string, block_string_to_byte_string
+from utils.logging import pprint
+
 # Input
 def get_request_mode(request,mode_operation):
     file_name = ""
@@ -16,7 +19,11 @@ def get_request_mode(request,mode_operation):
             encoded_bytes = base64.b64decode(data['inputText'])
             encoded_string = encoded_bytes.decode('utf-8')
             data['inputText'] = encoded_string
-        data['inputBit'] = ''.join(format(ord(char), '08b') for char in data['inputText'])
+        # data['inputBit'] = ''.join(format(ord(char), '08b') for char in data['inputText'])
+        data['inputBit'] = string_to_byte_string(data['inputText'])
+        pprint("Input Bit Raw", data['inputBit'])
+        while len(data['inputBit']) % 128 != 0:
+            data['inputBit'] = "0" + data['inputBit']
     
     # Convert key to bit
     data['keyBit'] = ''.join(format(ord(char), '08b') for char in data['key'])
@@ -41,15 +48,22 @@ def bit_to_file(file_name, text, mode_operation):
     return result
 
 def bit_to_text(text, mode_operation):
+
+    if mode_operation == 0: # Enkrip
+        byte_array = text
+    else: # Dekrip
+        byte_array = block_string_to_byte_string(text)
+
+    pprint("Byte to Text", byte_array)
+
     result = ''
 
-    for i in range(0, len(text), 8):
-        result += chr(int(text[i:i+8], 2))
-
+    for i in range(0, len(byte_array), 8):
+        result += chr(int(byte_array[i:i+8], 2))
     # Original string
 
     # Encode the string into base64
-    if(mode_operation==0):
+    if(mode_operation == 0):
         encoded_bytes = base64.b64encode(result.encode('utf-8'))
         encoded_string = encoded_bytes.decode('utf-8')
         result = encoded_string
