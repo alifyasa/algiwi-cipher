@@ -23,7 +23,7 @@ https://www.python.org/downloads/
 ### Frontend
 
 ```
-> cd frontend
+> cd src/client
 > cp .env.example .env
 > npm install
 > npm run dev
@@ -33,7 +33,7 @@ Notes: Isi key VITE_API_URL pada .env untuk terhubung ke backend (e.g. http://lo
 ### Backend
 
 ```
-> cd backend
+> cd src/api
 > pip install -r requirements.txt
 > python3 app.py
 ```
