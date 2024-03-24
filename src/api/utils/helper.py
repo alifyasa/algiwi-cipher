@@ -1,5 +1,7 @@
+import base64
+
 # Input
-def get_request_mode(request):
+def get_request_mode(request,mode_operation):
     file_name = ""
     if request.form:
         data = request.form.to_dict()
@@ -10,6 +12,10 @@ def get_request_mode(request):
     else:
         data = request.get_json()
         # Convert text to bit
+        if(mode_operation==1):
+            encoded_bytes = base64.b64decode(data['inputText'])
+            encoded_string = encoded_bytes.decode('utf-8')
+            data['inputText'] = encoded_string
         data['inputBit'] = ''.join(format(ord(char), '08b') for char in data['inputText'])
     
     # Convert key to bit
@@ -34,15 +40,25 @@ def bit_to_file(file_name, text, mode_operation):
 
     return result
 
-def bit_to_text(text):
+def bit_to_text(text, mode_operation):
     result = ''
+
     for i in range(0, len(text), 8):
         result += chr(int(text[i:i+8], 2))
+
+    # Original string
+
+    # Encode the string into base64
+    if(mode_operation==0):
+        encoded_bytes = base64.b64encode(result.encode('utf-8'))
+        encoded_string = encoded_bytes.decode('utf-8')
+        result = encoded_string
+
     return result
 
 def get_output_result(form, text, mode_operation, file_name):
     if form:
         res = bit_to_file(file_name, text, mode_operation)
     else:
-        res = bit_to_text(text)
+        res = bit_to_text(text, mode_operation)
     return res

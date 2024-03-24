@@ -10,7 +10,7 @@ class Mode():
         self.mode_method = mode_method
         self.start_time = datetime.now()
         self.end_time = datetime.now()
-    
+
     def set_bit(self, bit):
         self.bit = bit
 
@@ -25,7 +25,7 @@ class Mode():
 
     def extend_bit_by_key(self):
         # Panjang bit harus kelipatan panjang key
-        while len(self.bit) % len(self.key) != 0:
+        while len(self.bit) % BLOCK_SIZE != 0:
             self.bit += '0'
 
     def extend_bit_by_encryption_length(self):
@@ -43,23 +43,20 @@ class Mode():
         2. geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kiri
         '''
         encrypted_bit = ""
-        # # Calculate the number of zeros to add
 
-        # # Add zeros to the beginning of the string
-        if(len(self.key)<128):
-           self.key = self.key.zfill(128)
+        length_key = BLOCK_SIZE
 
-        for i in range(0, len(self.bit), len(self.key)):
+        for i in range(0, len(self.bit), length_key):
             # XOR-kan blok plainteks Pi dengan K dan dengan hasil XOR sebelumnya
-            block = self.bit[i:i+len(self.key)]
+            block = self.bit[i:i+length_key]
             if i == 0:
                 xor_result = int(block, 2) ^ int(IV, 2)
             else:
-                xor_result = int(block, 2) ^ int(encrypted_bit[i-len(self.key):i], 2)
+                xor_result = int(block, 2) ^ int(encrypted_bit[i-length_key:i], 2)
 
             xor_result = encrypt_block(xor_result, int(self.key,2))
 
-            xor_result = format(xor_result, f'0{len(self.key)}b')
+            xor_result = format(xor_result, f'0{length_key}b')
 
             # geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kiri
             shift_result = xor_result[1:] + xor_result[0]
@@ -77,16 +74,14 @@ class Mode():
         '''
         decrypted_bit = ""
 
-        if(len(self.key)<128):
-           self.key = self.key.zfill(128)
-        length_key = len(self.key)
+        length_key = BLOCK_SIZE
 
         for i in range(0, len(self.bit), length_key):
             # geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kanan
             block = self.bit[i:i+length_key]
 
             shift_result = block[-1] + block[:-1]
-    
+
             xor_result = decrypt_block(int(shift_result, 2), int(self.key,2))
 
             # XOR-kan blok cipher Ci dengan K dan dengan hasil XOR sebelumnya
@@ -94,6 +89,7 @@ class Mode():
                 xor_result = xor_result ^ int(IV, 2)
             else:
                 xor_result = xor_result ^ int(self.bit[i-length_key:i], 2)
+
             xor_result = format(xor_result, f'0{length_key}b')
 
             decrypted_bit += xor_result

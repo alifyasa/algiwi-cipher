@@ -13,7 +13,7 @@ mode = Mode(bit="", key="", mode_method=METHOD['ECB'], encryption_length=0)
 @app.route('/api/encrypt', methods=['POST'])
 def encrypt():
   # Input
-  data, file_name = get_request_mode(request)
+  data, file_name = get_request_mode(request,0)
 
   # Output
   mode.set_bit(data['inputBit'])
@@ -38,7 +38,7 @@ def encrypt():
 @app.route('/api/decrypt', methods=['POST'])
 def decrypt():
   # Input
-  data, file_name = get_request_mode(request)
+  data, file_name = get_request_mode(request,1)
 
   # Output
   mode.set_bit(data['inputBit'])
