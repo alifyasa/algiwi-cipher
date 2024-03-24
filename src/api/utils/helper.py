@@ -1,4 +1,5 @@
 import base64
+import os
 
 from utils.convert import string_to_byte_string, block_string_to_byte_string
 from utils.logging import pprint
@@ -44,7 +45,9 @@ def bit_to_file(file_name, text, mode_operation):
         mode = 'decrypted'
 
     result = bytes([int(text[i:i+8], 2) for i in range(0, len(text), 8)])
-    with open(f'{root_dir} {file_name}', 'wb') as file:
+    file_path = f'{root_dir} {file_name}'
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    with open(file_path, 'wb') as file:
         file.write(result)
 
     result = f'File has been {mode} in {root_dir} {file_name}'
