@@ -253,7 +253,7 @@ export const Home = () => {
         <FormControl mt="2">
           <FormLabel>Result {loading && <Spinner color="green.500" />}</FormLabel>
           {
-            result !== '' && isUrl(`${import.meta.env.VITE_API_URL}/${result}`) ? (
+            result !== '' && inputFile && isUrl(`${import.meta.env.VITE_API_URL}/${result}`) ? (
               <a href={`${import.meta.env.VITE_API_URL}/${result}`} target='_blank'>{`${import.meta.env.VITE_API_URL}/${result}`}</a>
             ) : (
               <Textarea borderWidth="1px" borderColor="gray" color="gray" size="sm" rows={5} value={result} readOnly />
