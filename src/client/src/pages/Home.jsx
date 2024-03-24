@@ -25,21 +25,11 @@ export const Home = () => {
   const [method, setMethod] = useState(METHOD.ECB);
   const [key, setKey] = useState('');
   const [encryptionLength, setEncryptionLength] = useState(1);
-  const [encryptionLengthList, setEncryptionLengthList] = useState([1]);
+  const [encryptionLengthList] = useState([1, 2, 4, 8, 16, 32, 64, 128]);
   const [errorText, setErrorText] = useState('');
   const [result, setResult] = useState('');
   const [time, setTime] = useState(0);
   const [loading, setLoading] = useState(false);
-
-  const getFactor = (n) => {
-    let factors = [];
-    for (let i = 1; i <= n; i++) {
-      if (n % i === 0) {
-        factors.push(i);
-      }
-    }
-    return factors;
-  }
 
   const encrypt = async () => {
     setErrorText('');
@@ -206,17 +196,7 @@ export const Home = () => {
         </FormControl>}
         <FormControl mt="2">
           <FormLabel>Method</FormLabel>
-          <Select borderWidth="1px" borderColor="black" placeholder='Select input option' defaultValue={method} onChange={e => {
-              setMethod(e.target.value);
-              if (e.target.value === METHOD.CFB || e.target.value === METHOD.OFB) {
-                setEncryptionLength(1);
-                if (key.length === 0) {
-                  setEncryptionLengthList([1]);
-                } else {
-                  setEncryptionLengthList(getFactor(key.length * 8));
-                }
-              }
-            }}>
+          <Select borderWidth="1px" borderColor="black" placeholder='Select input option' defaultValue={method} onChange={e => setMethod(e.target.value)}>
             <option value={METHOD.ECB}>{METHOD.ECB}</option>
             <option value={METHOD.CBC}>{METHOD.CBC}</option>
             <option value={METHOD.OFB}>{METHOD.OFB}</option>
@@ -226,17 +206,7 @@ export const Home = () => {
         </FormControl>
         <FormControl mt="2">
           <FormLabel>Key</FormLabel>
-          <Textarea borderWidth="1px" borderColor="black" placeholder="Input key" size="sm" rows={1} onChange={e => {
-            setKey(e.target.value)
-            if (method === METHOD.CFB || method === METHOD.OFB) {
-              setEncryptionLength(1);
-              if (e.target.value.length === 0) {
-                setEncryptionLengthList([1]);
-              } else {
-                setEncryptionLengthList(getFactor(e.target.value.length * 8));
-              }
-            }
-          }} />
+          <Textarea borderWidth="1px" borderColor="black" placeholder="Input key" size="sm" rows={1} onChange={e => setKey(e.target.value)} />
         </FormControl>
         {(method === METHOD.CFB || method === METHOD.OFB) && (
           <FormControl mt="2">

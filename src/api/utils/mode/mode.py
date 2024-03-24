@@ -36,8 +36,6 @@ class Mode():
     # Encrypt bit using CBC
     def encrypt_cbc(self):
         '''
-        EK(P) = (P + K) << 1
-
         Encrypt:
         1. XOR-kan blok plainteks Pi dengan K dan dengan hasil XOR sebelumnya
         2. geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kiri
@@ -99,8 +97,6 @@ class Mode():
     # Encrypt bit using OFB
     def encrypt_ofb(self):
         '''
-        EK(Xi) = (Xi + K) << 1
-
         r-bit dari hasil enkripsi antrian disalin menjadi elemen posisi paling kanan di antrian
         '''
         encrypted_bit = ""
@@ -119,6 +115,9 @@ class Mode():
 
     # Decrypt bit using OFB
     def decrypt_ofb(self):
+        '''
+        r-bit dari hasil enkripsi antrian disalin menjadi elemen posisi paling kanan di antrian
+        '''
         decrypted_bit = ""
         length_key = BLOCK_SIZE
         for i in range(0, len(self.bit), self.encryption_length):
@@ -136,8 +135,6 @@ class Mode():
     # Encrypt bit using ECB
     def encrypt_ecb(self):
         '''
-        EK(P) = (P + K) << 1
-
         Encrypt:
         1. XOR-kan blok plainteks Pi dengan K 
         2. geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kiri
@@ -176,8 +173,6 @@ class Mode():
     # Encrypt bit using Counter
     def encrypt_counter(self):
         '''
-        EK(Ti) = (Ti + K) << 1
-
         • Nilai counter harus berbeda dari setiap blok yang dienkripsi. Pada mulanya, 
         untuk enkripsi blok pertama, counter diinisialisasi dengan sebuah nilai. 
         • Selanjutnya, untuk enkripsi blok-blok berikutnya counter dinaikkan
@@ -200,6 +195,12 @@ class Mode():
 
     # Decrypt bit using Counter
     def decrypt_counter(self):
+        '''
+        • Nilai counter harus berbeda dari setiap blok yang dienkripsi. Pada mulanya, 
+        untuk enkripsi blok pertama, counter diinisialisasi dengan sebuah nilai. 
+        • Selanjutnya, untuk enkripsi blok-blok berikutnya counter dinaikkan
+        (increment) nilainya satu (counter = counter + 1). 
+        '''
         decrypted_bit = ""
         length_key = BLOCK_SIZE
         for i in range(0, len(self.bit), length_key):
@@ -218,8 +219,6 @@ class Mode():
     # Encrypt bit using CFB
     def encrypt_cfb(self):
         '''
-        EK(Xi) = (Xi + K) << 1
-
         r-bit dari hasil enkripsi plaintext menjadi elemen posisi paling kanan di antrian
         '''
         encrypted_bit = ""
@@ -237,6 +236,9 @@ class Mode():
 
     # Decrypt bit using CFB
     def decrypt_cfb(self):
+        '''
+        r-bit dari ciphertext menjadi elemen posisi paling kanan di antrian
+        '''
         decrypted_bit = ""
         length_key = BLOCK_SIZE
         for i in range(0, len(self.bit), self.encryption_length):
