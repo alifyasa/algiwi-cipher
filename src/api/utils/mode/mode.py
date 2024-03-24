@@ -182,30 +182,34 @@ class Mode():
         (increment) nilainya satu (counter = counter + 1). 
         '''
         encrypted_bit = ""
-        for i in range(0, len(self.bit), len(self.key)):
+        length_key = BLOCK_SIZE
+        for i in range(0, len(self.bit), length_key):
             if (i == 0):
-                counter = format(int(COUNTER, 2), f'0{len(self.key)}b')
-            encrypted_counter = format(int(counter, 2) ^ int(self.key, 2), f'0{len(self.key)}b')
+                counter = format(int(COUNTER, 2), f'0{length_key}b')
+            encrypted_counter = format(int(counter, 2) ^ int(self.key, 2), f'0{length_key}b')
             encrypted_counter = encrypted_counter[1:] + encrypted_counter[0]
-            block = self.bit[i:i+len(self.key)]
-            xor_result = int(block, 2) ^ int(encrypted_counter, 2)
-            xor_result = format(xor_result, f'0{len(self.key)}b')
-            counter = format(int(counter, 2) + 1, f'0{len(self.key)}b')
+            block = self.bit[i:i+length_key]
+
+            xor_result = encrypt_block(int(block, 2), int(encrypted_counter,2))
+            xor_result = format(xor_result, f'0{length_key}b')
+            counter = format(int(counter, 2) + 1, f'0{length_key}b')
             encrypted_bit += xor_result
         return encrypted_bit
 
     # Decrypt bit using Counter
     def decrypt_counter(self):
         decrypted_bit = ""
-        for i in range(0, len(self.bit), len(self.key)):
+        length_key = BLOCK_SIZE
+        for i in range(0, len(self.bit), length_key):
             if (i == 0):
-                counter = format(int(COUNTER, 2), f'0{len(self.key)}b')
-            encrypted_counter = format(int(counter, 2) ^ int(self.key, 2), f'0{len(self.key)}b')
+                counter = format(int(COUNTER, 2), f'0{length_key}b')
+            encrypted_counter = format(int(counter, 2) ^ int(self.key, 2), f'0{length_key}b')
             encrypted_counter = encrypted_counter[1:] + encrypted_counter[0]
-            block = self.bit[i:i+len(self.key)]
-            xor_result = int(block, 2) ^ int(encrypted_counter, 2)
-            xor_result = format(xor_result, f'0{len(self.key)}b')
-            counter = format(int(counter, 2) + 1, f'0{len(self.key)}b')
+            block = self.bit[i:i+length_key]
+
+            xor_result = decrypt_block(int(block, 2), int(encrypted_counter,2))
+            xor_result = format(xor_result, f'0{length_key}b')
+            counter = format(int(counter, 2) + 1, f'0{length_key}b')
             decrypted_bit += xor_result
         return decrypted_bit
 
