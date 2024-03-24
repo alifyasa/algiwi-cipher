@@ -1,5 +1,6 @@
 from utils.constant import *
 from datetime import datetime
+from utils.cipher.service import *
 
 class Mode():
     def __init__(self, bit, key, mode_method, encryption_length=0):
@@ -9,7 +10,7 @@ class Mode():
         self.mode_method = mode_method
         self.start_time = datetime.now()
         self.end_time = datetime.now()
-    
+
     def set_bit(self, bit):
         self.bit = bit
 
@@ -24,7 +25,7 @@ class Mode():
 
     def extend_bit_by_key(self):
         # Panjang bit harus kelipatan panjang key
-        while len(self.bit) % len(self.key) != 0:
+        while len(self.bit) % BLOCK_SIZE != 0:
             self.bit += '0'
 
     def extend_bit_by_encryption_length(self):
@@ -42,18 +43,26 @@ class Mode():
         2. geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kiri
         '''
         encrypted_bit = ""
-        for i in range(0, len(self.bit), len(self.key)):
+
+        length_key = BLOCK_SIZE
+
+        for i in range(0, len(self.bit), length_key):
             # XOR-kan blok plainteks Pi dengan K dan dengan hasil XOR sebelumnya
-            block = self.bit[i:i+len(self.key)]
+            block = self.bit[i:i+length_key]
             if i == 0:
                 xor_result = int(block, 2) ^ int(IV, 2)
             else:
-                xor_result = int(block, 2) ^ int(encrypted_bit[i-len(self.key):i], 2)
-            xor_result = xor_result ^ int(self.key, 2)
-            xor_result = format(xor_result, f'0{len(self.key)}b')
+                xor_result = int(block, 2) ^ int(encrypted_bit[i-length_key:i], 2)
+
+            xor_result = encrypt_block(xor_result, int(self.key,2))
+
+            xor_result = format(xor_result, f'0{length_key}b')
+
             # geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kiri
             shift_result = xor_result[1:] + xor_result[0]
+
             encrypted_bit += shift_result
+
         return encrypted_bit
 
     # Decrypt bit using CBC
@@ -64,18 +73,27 @@ class Mode():
         2. XOR-kan blok cipher Ci dengan K dan dengan hasil XOR sebelumnya
         '''
         decrypted_bit = ""
-        for i in range(0, len(self.bit), len(self.key)):
+
+        length_key = BLOCK_SIZE
+
+        for i in range(0, len(self.bit), length_key):
             # geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kanan
-            block = self.bit[i:i+len(self.key)]
+            block = self.bit[i:i+length_key]
+
             shift_result = block[-1] + block[:-1]
+
+            xor_result = decrypt_block(int(shift_result, 2), int(self.key,2))
+
             # XOR-kan blok cipher Ci dengan K dan dengan hasil XOR sebelumnya
-            xor_result = int(shift_result, 2) ^ int(self.key, 2)
             if i == 0:
                 xor_result = xor_result ^ int(IV, 2)
             else:
-                xor_result = xor_result ^ int(self.bit[i-len(self.key):i], 2)
-            xor_result = format(xor_result, f'0{len(self.key)}b')
+                xor_result = xor_result ^ int(self.bit[i-length_key:i], 2)
+
+            xor_result = format(xor_result, f'0{length_key}b')
+
             decrypted_bit += xor_result
+
         return decrypted_bit
 
     # Encrypt bit using OFB
@@ -86,11 +104,12 @@ class Mode():
         r-bit dari hasil enkripsi antrian disalin menjadi elemen posisi paling kanan di antrian
         '''
         encrypted_bit = ""
+        length_key = BLOCK_SIZE
         for i in range(0, len(self.bit), self.encryption_length):
             if (i == 0):
                 queue = format(int(IV, 2), f'0{len(self.key)}b')
-            encrypted_queue = format(int(queue, 2) ^ int(self.key, 2), f'0{len(self.key)}b')
-            encrypted_queue = encrypted_queue[1:] + encrypted_queue[0]
+
+            encrypted_queue = format(encrypt_block(int(queue, 2), int(self.key, 2)), f'0{length_key}b')
             block = self.bit[i:i+self.encryption_length]
             xor_result = int(block, 2) ^ int(encrypted_queue[:self.encryption_length], 2)
             xor_result = format(xor_result, f'0{self.encryption_length}b')
@@ -101,11 +120,12 @@ class Mode():
     # Decrypt bit using OFB
     def decrypt_ofb(self):
         decrypted_bit = ""
+        length_key = BLOCK_SIZE
         for i in range(0, len(self.bit), self.encryption_length):
             if (i == 0):
                 queue = format(int(IV, 2), f'0{len(self.key)}b')
-            encrypted_queue = format(int(queue, 2) ^ int(self.key, 2), f'0{len(self.key)}b')
-            encrypted_queue = encrypted_queue[1:] + encrypted_queue[0]
+
+            encrypted_queue = format(encrypt_block(int(queue, 2), int(self.key, 2)), f'0{length_key}b')
             block = self.bit[i:i+self.encryption_length]
             xor_result = int(block, 2) ^ int(encrypted_queue[:self.encryption_length], 2)
             xor_result = format(xor_result, f'0{self.encryption_length}b')
@@ -123,11 +143,12 @@ class Mode():
         2. geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kiri
         '''
         encrypted_bit = ""
-        for i in range(0, len(self.bit), len(self.key)):
+        length_key = BLOCK_SIZE
+        for i in range(0, len(self.bit), length_key):
             # XOR-kan blok plainteks Pi dengan K
-            block = self.bit[i:i+len(self.key)]
-            xor_result = int(block, 2) ^ int(self.key, 2)
-            xor_result = format(xor_result, f'0{len(self.key)}b')
+            block = self.bit[i:i+length_key]
+            xor_result = encrypt_block(int(block, 2), int(self.key,2))
+            xor_result = format(xor_result, f'0{length_key}b')
             # geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kiri
             shift_result = xor_result[1:] + xor_result[0]
             encrypted_bit += shift_result
@@ -141,13 +162,14 @@ class Mode():
         2. XOR-kan blok cipher Ci dengan K
         '''
         decrypted_bit = ""
-        for i in range(0, len(self.bit), len(self.key)):
+        length_key = BLOCK_SIZE
+        for i in range(0, len(self.bit), length_key):
             # geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kanan
-            block = self.bit[i:i+len(self.key)]
+            block = self.bit[i:i+length_key]
             shift_result = block[-1] + block[:-1]
             # XOR-kan blok cipher Ci dengan K
-            xor_result = int(shift_result, 2) ^ int(self.key, 2)
-            xor_result = format(xor_result, f'0{len(self.key)}b')
+            xor_result = decrypt_block(int(shift_result, 2), int(self.key,2))
+            xor_result = format(xor_result, f'0{length_key}b')
             decrypted_bit += xor_result
         return decrypted_bit
 
@@ -162,30 +184,34 @@ class Mode():
         (increment) nilainya satu (counter = counter + 1). 
         '''
         encrypted_bit = ""
-        for i in range(0, len(self.bit), len(self.key)):
+        length_key = BLOCK_SIZE
+        for i in range(0, len(self.bit), length_key):
             if (i == 0):
-                counter = format(int(COUNTER, 2), f'0{len(self.key)}b')
-            encrypted_counter = format(int(counter, 2) ^ int(self.key, 2), f'0{len(self.key)}b')
-            encrypted_counter = encrypted_counter[1:] + encrypted_counter[0]
-            block = self.bit[i:i+len(self.key)]
-            xor_result = int(block, 2) ^ int(encrypted_counter, 2)
-            xor_result = format(xor_result, f'0{len(self.key)}b')
-            counter = format(int(counter, 2) + 1, f'0{len(self.key)}b')
+                counter = format(int(COUNTER, 2), f'0{length_key}b')
+            encrypted_counter = encrypt_block(int(counter, 2), int(self.key,2))
+
+            block = self.bit[i:i+length_key]
+
+            xor_result = encrypted_counter ^ int(block,2)
+            xor_result = format(xor_result, f'0{length_key}b')
+            counter = format(int(counter, 2) + 1, f'0{length_key}b')
             encrypted_bit += xor_result
         return encrypted_bit
 
     # Decrypt bit using Counter
     def decrypt_counter(self):
         decrypted_bit = ""
-        for i in range(0, len(self.bit), len(self.key)):
+        length_key = BLOCK_SIZE
+        for i in range(0, len(self.bit), length_key):
             if (i == 0):
-                counter = format(int(COUNTER, 2), f'0{len(self.key)}b')
-            encrypted_counter = format(int(counter, 2) ^ int(self.key, 2), f'0{len(self.key)}b')
-            encrypted_counter = encrypted_counter[1:] + encrypted_counter[0]
-            block = self.bit[i:i+len(self.key)]
-            xor_result = int(block, 2) ^ int(encrypted_counter, 2)
-            xor_result = format(xor_result, f'0{len(self.key)}b')
-            counter = format(int(counter, 2) + 1, f'0{len(self.key)}b')
+                counter = format(int(COUNTER, 2), f'0{length_key}b')
+            encrypted_counter = encrypt_block(int(counter, 2), int(self.key,2))
+
+            block = self.bit[i:i+length_key]
+
+            xor_result = encrypted_counter ^ int(block,2)
+            xor_result = format(xor_result, f'0{length_key}b')
+            counter = format(int(counter, 2) + 1, f'0{length_key}b')
             decrypted_bit += xor_result
         return decrypted_bit
 
@@ -197,11 +223,11 @@ class Mode():
         r-bit dari hasil enkripsi plaintext menjadi elemen posisi paling kanan di antrian
         '''
         encrypted_bit = ""
+        length_key = BLOCK_SIZE
         for i in range(0, len(self.bit), self.encryption_length):
             if (i == 0):
-                queue = format(int(IV, 2), f'0{len(self.key)}b')
-            encrypted_queue = format(int(queue, 2) ^ int(self.key, 2), f'0{len(self.key)}b')
-            encrypted_queue = encrypted_queue[1:] + encrypted_queue[0]
+                queue = format(int(IV, 2), f'0{length_key}b')
+            encrypted_queue = format(encrypt_block(int(queue, 2), int(self.key, 2)), f'0{length_key}b')
             block = self.bit[i:i+self.encryption_length]
             xor_result = int(block, 2) ^ int(encrypted_queue[:self.encryption_length], 2)
             xor_result = format(xor_result, f'0{self.encryption_length}b')
@@ -212,11 +238,11 @@ class Mode():
     # Decrypt bit using CFB
     def decrypt_cfb(self):
         decrypted_bit = ""
+        length_key = BLOCK_SIZE
         for i in range(0, len(self.bit), self.encryption_length):
             if (i == 0):
-                queue = format(int(IV, 2), f'0{len(self.key)}b')
-            encrypted_queue = format(int(queue, 2) ^ int(self.key, 2), f'0{len(self.key)}b')
-            encrypted_queue = encrypted_queue[1:] + encrypted_queue[0]
+                queue = format(int(IV, 2), f'0{length_key}b')
+            encrypted_queue = format(encrypt_block(int(queue,2), int(self.key,2)), f'0{length_key}b')
             block = self.bit[i:i+self.encryption_length]
             xor_result = int(block, 2) ^ int(encrypted_queue[:self.encryption_length], 2)
             xor_result = format(xor_result, f'0{self.encryption_length}b')
