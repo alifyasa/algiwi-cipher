@@ -141,11 +141,12 @@ class Mode():
         2. geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kiri
         '''
         encrypted_bit = ""
-        for i in range(0, len(self.bit), len(self.key)):
+        length_key = BLOCK_SIZE
+        for i in range(0, len(self.bit), length_key):
             # XOR-kan blok plainteks Pi dengan K
-            block = self.bit[i:i+len(self.key)]
-            xor_result = int(block, 2) ^ int(self.key, 2)
-            xor_result = format(xor_result, f'0{len(self.key)}b')
+            block = self.bit[i:i+length_key]
+            xor_result = encrypt_block(int(block, 2), int(self.key,2))
+            xor_result = format(xor_result, f'0{length_key}b')
             # geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kiri
             shift_result = xor_result[1:] + xor_result[0]
             encrypted_bit += shift_result
@@ -159,13 +160,14 @@ class Mode():
         2. XOR-kan blok cipher Ci dengan K
         '''
         decrypted_bit = ""
-        for i in range(0, len(self.bit), len(self.key)):
+        length_key = BLOCK_SIZE
+        for i in range(0, len(self.bit), length_key):
             # geser secara wrapping bit-bit dari hasil langkah 1 satu posisi ke kanan
-            block = self.bit[i:i+len(self.key)]
+            block = self.bit[i:i+length_key]
             shift_result = block[-1] + block[:-1]
             # XOR-kan blok cipher Ci dengan K
-            xor_result = int(shift_result, 2) ^ int(self.key, 2)
-            xor_result = format(xor_result, f'0{len(self.key)}b')
+            xor_result = decrypt_block(int(shift_result, 2), int(self.key,2))
+            xor_result = format(xor_result, f'0{length_key}b')
             decrypted_bit += xor_result
         return decrypted_bit
 
